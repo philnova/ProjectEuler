@@ -57,10 +57,32 @@ for row in NUMBERGRID:
 
 def grid_product_find(number_grid, length = 4):
 	greatest_product = 0
+	flag = "none"
 
 	#test horizontals
-	for row in NUMBERGRID:
-		for col_idx in xrange(16):
+	for row in number_grid:
+		for col_idx in xrange(len(number_grid[0])-length):
 			current_product = row[col_idx]*row[col_idx+1]*row[col_idx+2]*row[col_idx+3]
+			if current_product > greatest_product:
+				greatest_product = current_product
+				flag = "horizontals"
 
-	
+	#test verticals
+	for col_idx in xrange(len(number_grid[0])):
+		for row_idx in xrange(len(number_grid)-length):
+			current_product = number_grid[row_idx][col_idx] * number_grid[row_idx+1][col_idx] * number_grid[row_idx+2][col_idx] * number_grid[row_idx+3][col_idx]
+			if current_product > greatest_product:
+				greatest_product = current_product
+				flag = "verticals"
+
+	#test diagonals
+	for col_idx in xrange(len(number_grid[0])-length):
+		for row_idx in xrange(len(number_grid)-length):
+			current_product = number_grid[row_idx][col_idx] * number_grid[row_idx+1][col_idx+1] * number_grid[row_idx+2][col_idx+2] * number_grid[row_idx+3][col_idx+3]
+			if current_product > greatest_product:
+				greatest_product = current_product
+				flag = "diagonals"
+
+	return greatest_product, flag
+
+print grid_product_find(NUMBERGRID)
