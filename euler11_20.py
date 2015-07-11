@@ -395,7 +395,8 @@ NOTE: Once the chain starts the terms are allowed to go above one million.
 """
 
 COLLATZ_CACHE = {2 : 2, 1 : 1}
-def collatz_length(n):
+def collatz_length(n, limit = 1000000):
+	modifier = 0
 	original_val = n
 	if n in COLLATZ_CACHE.keys():
 		return COLLATZ_CACHE[n]
@@ -408,14 +409,14 @@ def collatz_length(n):
 			else:
 				n = (3*n)+1
 			collatz_list.append(n)
-
+		modifier = COLLATZ_CACHE[n]
 		#print collatz_list
 		while collatz_list:
 			latest = collatz_list.pop(0)
 			if latest in COLLATZ_CACHE.keys():
 				break
-			else:
-				COLLATZ_CACHE[latest] = len(collatz_list)+1
+			elif latest < limit:
+				COLLATZ_CACHE[latest] = len(collatz_list)+modifier
 	return COLLATZ_CACHE[original_val]
 
 print collatz_length(3)
@@ -424,9 +425,9 @@ def find_longest_collatz_chain(limit=1000000):
 	longest_chain = 0
 	generating_integer = None
 	for integer in xrange(2,limit):
-		current_chain = collatz_length(integer)
+		current_chain = collatz_length(integer,limit)
 		if not integer % 10000:
-			print integer, current_chain
+			print integer, current_chain, len(COLLATZ_CACHE.keys())
 		if current_chain > longest_chain:
 			longest_chain = current_chain
 			generating_integer = integer
