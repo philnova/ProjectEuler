@@ -49,6 +49,8 @@ numbergrid = """08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
 20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48""".split()
 
+
+
 NUMBERGRID = [[[] for i in xrange(20)] for i in xrange(20)]
 for idx, item in enumerate(numbergrid):
 	NUMBERGRID[idx/20][idx%20] = int(item)
@@ -61,27 +63,35 @@ def grid_product_find(number_grid, length = 4):
 
 	#test horizontals
 	for row in number_grid:
-		for col_idx in xrange(len(number_grid[0])-length):
+		for col_idx in xrange(len(number_grid[0])-length+1):
 			current_product = row[col_idx]*row[col_idx+1]*row[col_idx+2]*row[col_idx+3]
 			if current_product > greatest_product:
 				greatest_product = current_product
 				flag = "horizontals"
 
 	#test verticals
-	for col_idx in xrange(len(number_grid[0])):
-		for row_idx in xrange(len(number_grid)-length):
+	for row_idx in xrange(len(number_grid)-length+1):
+		for col_idx in xrange(len(number_grid[0])):
 			current_product = number_grid[row_idx][col_idx] * number_grid[row_idx+1][col_idx] * number_grid[row_idx+2][col_idx] * number_grid[row_idx+3][col_idx]
 			if current_product > greatest_product:
 				greatest_product = current_product
-				flag = "verticals"
+				flag = "verticals "
 
 	#test diagonals
-	for col_idx in xrange(len(number_grid[0])-length):
-		for row_idx in xrange(len(number_grid)-length):
+	for row_idx in xrange(len(number_grid)-length+1):
+		for col_idx in xrange(len(number_grid[0])-length+1):
 			current_product = number_grid[row_idx][col_idx] * number_grid[row_idx+1][col_idx+1] * number_grid[row_idx+2][col_idx+2] * number_grid[row_idx+3][col_idx+3]
 			if current_product > greatest_product:
 				greatest_product = current_product
 				flag = "diagonals"
+
+	#test reverse diagonals
+	for row_idx in xrange(length-1, len(number_grid)):
+		for col_idx in xrange(len(number_grid[0])-length+1):
+			current_product = number_grid[row_idx][col_idx] * number_grid[row_idx-1][col_idx+1] * number_grid[row_idx-2][col_idx+2] * number_grid[row_idx-3][col_idx+3]
+			if current_product > greatest_product:
+				greatest_product = current_product
+				flag = "reverse diagonals"
 
 	return greatest_product, flag
 
