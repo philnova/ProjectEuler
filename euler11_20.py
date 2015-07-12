@@ -1,3 +1,5 @@
+import time
+
 """
 Problem 11:
 
@@ -433,5 +435,43 @@ def find_longest_collatz_chain(limit=1000000):
 			generating_integer = integer
 	return generating_integer, longest_chain
 
-print find_longest_collatz_chain()
+#print find_longest_collatz_chain()
 #print COLLATZ_CACHE
+
+
+# previous solution works but has PyPy runtime of ~12hours. Needs serious optimization
+
+def collatz_length_2(n, limit = 1000000):
+	if n in COLLATZ_CACHE.keys():
+		return COLLATZ_CACHE[n]
+	else:
+		original_val = n
+		counter = 0
+		while not n in COLLATZ_CACHE.keys():
+			if n % 2 == 0:
+				n = n/2
+			else:
+				n = (3*n)+1
+			counter += 1
+		COLLATZ_CACHE[original_val] = COLLATZ_CACHE[n] + counter
+		return COLLATZ_CACHE[original_val]
+
+def find_longest_collatz_chain_2(limit=1000000):
+	longest_chain = 0
+	generating_integer = None
+	for integer in xrange(2,limit):
+		current_chain = collatz_length_2(integer,limit)
+		if not integer % 10000:
+			print integer, current_chain, len(COLLATZ_CACHE.keys())
+		if current_chain > longest_chain:
+			longest_chain = current_chain
+			generating_integer = integer
+	return generating_integer, longest_chain
+
+start1 = time.time()
+print find_longest_collatz_chain_2(10000)
+print time.time()-start1
+
+start2 = time.time()
+print find_longest_collatz_chain(10000)
+print time.time()-start2
