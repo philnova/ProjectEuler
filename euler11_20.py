@@ -464,8 +464,8 @@ def find_longest_collatz_chain_2(limit=1000000):
 	return generating_integer, longest_chain
 
 start1 = time.time()
-print find_longest_collatz_chain_2()
-print time.time()-start1
+#print find_longest_collatz_chain_2()
+#print time.time()-start1
 
 #start2 = time.time()
 #print find_longest_collatz_chain(10000)
@@ -485,44 +485,79 @@ def collatz(n, count=1):
             n = 3*n + 1
     return count
  
-max = [0,0]
-for i in range(1000000):
-    c = collatz(i)
-    if c > max[0]:
-        max[0] = c
-        max[1] = i
+# max = [0,0]
+# for i in range(1000000):
+#     c = collatz(i)
+#     if c > max[0]:
+#         max[0] = c
+#         max[1] = i
  
-elapsed = (time.time() - start)
-print "found %s at length %s in %s seconds" % (max[1],max[0],elapsed)
+# elapsed = (time.time() - start)
+# print "found %s at length %s in %s seconds" % (max[1],max[0],elapsed)
 
 # the entire process completes in 51 seconds with no cache!
 
 # now let's add a cache
 start = time.time()
  
-limit = 1000000
-collatz_length = [0] * limit
-collatz_length[1] = 1
-max_length = [1,1]
+# limit = 1000000
+# collatz_length = [0] * limit
+# collatz_length[1] = 1
+# max_length = [1,1]
  
-for i in range(1,1000000):
-    n,s = i,0
-    TO_ADD = [] # collatz_length not yet known
-    while n > limit - 1 or collatz_length[n] < 1: 
-        TO_ADD.append(n)
-        if n % 2 == 0: n = n/2
-        else: n = 3*n + 1
-        s += 1
-    # collatz_length now known from previous calculations
-    p = collatz_length[n]
-    for j in range(s):
-        m = TO_ADD[j]
-        if m < limit:
-            new_length = collatz_length[n] + s - j
-            collatz_length[m] = new_length
-            if new_length > max_length[1]: max_length = [i,new_length]
+# for i in range(1,1000000):
+#     n,s = i,0
+#     TO_ADD = [] # collatz_length not yet known
+#     while n > limit - 1 or collatz_length[n] < 1: 
+#         TO_ADD.append(n)
+#         if n % 2 == 0: n = n/2
+#         else: n = 3*n + 1
+#         s += 1
+#     # collatz_length now known from previous calculations
+#     p = collatz_length[n]
+#     for j in range(s):
+#         m = TO_ADD[j]
+#         if m < limit:
+#             new_length = collatz_length[n] + s - j
+#             collatz_length[m] = new_length
+#             if new_length > max_length[1]: max_length = [i,new_length]
  
-elapsed = (time.time() - start)
-print "found %s at length %s in %s seconds" % (max_length[0],max_length[1],elapsed)
+#elapsed = (time.time() - start)
+#print "found %s at length %s in %s seconds" % (max_length[0],max_length[1],elapsed)
 
 # with this approach, our solution is down to 5 s!
+
+#==========================================#
+
+"""
+Problem 15:
+
+Starting in the top left corner of a 2x2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
+How many such routes are there through a 20x20 grid?
+"""
+
+def recursive_counter(x,y):
+
+	if x==0 and y==0:
+		return 1
+	paths = 0
+	if x:
+		paths += recursive_counter(x-1,y)
+	if y:
+		paths += recursive_counter(x,y-1)
+	return paths
+
+print recursive_counter(2,2)
+
+def dynamic_counter(size_x, size_y):
+	dynamic_array = [[0 if dummy1 else 1 for dummy1 in xrange(size_x+1)] for dummy2 in xrange(size_y+1)]
+	dynamic_array[0] = [1 for dummy in xrange(size_x+1)]
+	
+	for x in xrange(1,size_x+1):
+		for y in xrange(1,size_y+1):
+			dynamic_array[x][y] = dynamic_array[x-1][y] + dynamic_array[x][y-1]
+
+	return dynamic_array[size_x][size_y]
+
+print dynamic_counter(20,20)
+
