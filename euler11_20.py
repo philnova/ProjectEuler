@@ -537,7 +537,6 @@ How many such routes are there through a 20x20 grid?
 """
 
 def recursive_counter(x,y):
-
 	if x==0 and y==0:
 		return 1
 	paths = 0
@@ -547,7 +546,10 @@ def recursive_counter(x,y):
 		paths += recursive_counter(x,y-1)
 	return paths
 
-print recursive_counter(2,2)
+# start = time.time()
+# print recursive_counter(20,20)
+# print time.time() - start
+# print 
 
 def dynamic_counter(size_x, size_y):
 	dynamic_array = [[0 if dummy1 else 1 for dummy1 in xrange(size_x+1)] for dummy2 in xrange(size_y+1)]
@@ -559,5 +561,59 @@ def dynamic_counter(size_x, size_y):
 
 	return dynamic_array[size_x][size_y]
 
-print dynamic_counter(20,20)
+# start = time.time()
+# print dynamic_counter(20,20)
+# print time.time() - start
 
+#==========================================#
+
+"""
+Problem 16:
+
+If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+
+If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?
+"""
+
+num_to_text_dict = {1000: "thousand", 100: "hundred", 90: "ninety", 80: "eighty", 70: "seventy", 60: "sixty", 50: "fifty", 40: "forty", 30: "thirty", 20: "twenty", 19: "nineteen", 18: "eighteen", 17: "seventeen", 16: "sixteen", 15: "fifteen", 14: "fourteen", 13: "thirteen", 12: "twelve", 11: "eleven", 10: "ten", 9: "nine", 8: "eight", 7: "seven", 6: "six", 5: "five", 4: "four", 3: "three", 2: "two", 1: "one", 0: ""}
+
+def num_to_text(n):
+	strnum = str(n)
+	while len(strnum) < 4:
+		strnum = "0"+strnum
+
+
+	#is number between one and ten?
+	if not n/10:
+		return num_to_text_dict[n]
+	
+	answer = ""
+	#is number a teen?
+	if strnum[2] == "1":
+		answer += num_to_text_dict[int(strnum[2::])]
+	else:
+		answer += num_to_text_dict[int(strnum[2]+"0")] 
+		answer += num_to_text_dict[int(strnum[3])]
+
+	#hundreds column
+	if 0 < n/100 < 10:
+		answer += num_to_text_dict[n/100]
+		if n%100:
+			answer+="and"
+		answer += num_to_text_dict[100]
+
+	#thousands column
+	if 0 < n/1000 < 10:
+		answer += num_to_text_dict[n/1000]
+		answer += num_to_text_dict[1000]
+
+	return answer
+
+def letter_tally(start, end):
+	total = 0
+	for i in xrange(start, end+1):
+		print i, num_to_text(i)
+		total += len(num_to_text(i))
+	return total
+
+print letter_tally(1,1000)
