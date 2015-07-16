@@ -187,9 +187,79 @@ def fibonacci(ndigits = 2):
 
 #======================================#
 
+"""
+Problem 26:
+A unit fraction contains 1 in the numerator. The decimal representation of the unit fractions with denominators 2 to 10 are given:
+
+1/2	= 	0.5
+1/3	= 	0.(3)
+1/4	= 	0.25
+1/5	= 	0.2
+1/6	= 	0.1(6)
+1/7	= 	0.(142857)
+1/8	= 	0.125
+1/9	= 	0.(1)
+1/10	= 	0.1
+Where 0.1(6) means 0.166666..., and has a 1-digit recurring cycle. It can be seen that 1/7 has a 6-digit recurring cycle.
+
+Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
+"""
+import decimal
+
+def string_chop(string, window):
+	if len(string) <= window:
+		return [string]
+	else:
+		return [string[0:window]]+string_chop(string[window::],window)
+
+def find_repeating_element(flt):
+	flt = str(flt)[2::]
+	window_size = 1
+	while window_size < len(flt)-1:
+		#chop up string into evenly sized windows
+		test_strings = string_chop(flt, window_size)
+
+		if len(test_strings)==2 and len(test_strings[1])<len(test_strings[0]):
+			#assert 1==0
+			if test_strings[1]==test_strings[0][0:len(test_strings[1])]:
+				print "blah", test_strings
+				#assert 1==0
+				return len(test_strings[0])
+
+		while len(test_strings[-1])<len(test_strings[0]):
+			test_strings.pop()
+		
+		if len(test_strings)>1 and len(list(set(test_strings)))==1:
+			return window_size
+		window_size += 1
+	return 0
+
+def longest_repeating_element(limit=1000):
+	longest_repeat = float("-inf")
+	longest_n = None
+	for n in xrange(2,1000):
+
+		repeat = find_repeating_element(decimal.Decimal(1)/n)
+
+		if repeat>15:
+			print n, repeat, decimal.Decimal(1)/n
+
+		if repeat >= longest_repeat:
+			longest_repeat = repeat
+			longest_n = n
+	return longest_repeat, longest_n
+
+#print find_repeating_element(1.0/3)
+#print find_repeating_element(1.0/4)
+#print find_repeating_element(decimal.Decimal(1)/7)
+
+print longest_repeating_element()
+
+#======================================#
 
 
-#def all_primes(start, end):
+
+def all_primes(start, end):
         return list(sorted(set(range(start,end+1)).difference(set((p * f) for p in range(2, int(end ** 0.5) + 2) for f in range(2, (end/p) + 1)))))
 
 #print all_primes(10000000,10010000)
@@ -224,12 +294,6 @@ def little_g_iterative(x,a):
 	return recursion_depth
 
 
-# print little_g_iterative(10,math.sqrt(10))
-# print little_g(10,math.sqrt(10))
-
-# for i in xrange(1,30):
-# 	print i, little_g_iterative(i, math.sqrt(i)), little_g(i, math.sqrt(i))
-
 def big_g(n):
 	if n==90:
 		return 7564511
@@ -237,9 +301,9 @@ def big_g(n):
 		return little_g_iterative(n, math.sqrt(n))
 
 
-print len(RELEVANT_PRIMES)
-cumsum = 0
-for PRIME in RELEVANT_PRIMES:
-	print PRIME
- 	cumsum += big_g(PRIME)
-print cumsum % 1000000007
+# print len(RELEVANT_PRIMES)
+# cumsum = 0
+# for PRIME in RELEVANT_PRIMES:
+# 	print PRIME
+#  	cumsum += big_g(PRIME)
+# print cumsum % 1000000007
