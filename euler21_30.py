@@ -208,29 +208,38 @@ def little_g(x,a):
 #plus
 #number of times we need to subtract a from x before x becomes less or equal to a
 
-#def little_g_iterative(x,a):
-#	while x>=a:
+def little_g_iterative(x,a):
+	recursion_depth = 0
+	to_process = [x]
+	while to_process:
+		to_add = []
+		for item in to_process:
+			if item >= a:
+				to_add.append(item-1)
+				to_add.append(item-a)
+			else:
+				recursion_depth += 1
+		to_process = to_add
+
+	return recursion_depth
 
 
+# print little_g_iterative(10,math.sqrt(10))
+# print little_g(10,math.sqrt(10))
+
+# for i in xrange(1,30):
+# 	print i, little_g_iterative(i, math.sqrt(i)), little_g(i, math.sqrt(i))
 
 def big_g(n):
 	if n==90:
 		return 7564511
 	else:
-		return little_g(n, math.sqrt(n))
+		return little_g_iterative(n, math.sqrt(n))
 
-def big_g_modified(n):
-	leftside = n-math.sqrt(n)+1
-	rightside = int((n-math.sqrt(n))/math.sqrt(n))+1
-	print leftside, rightside
-	return leftside+rightside
 
-#print math.sqrt(6)
-print little_g(20, math.sqrt(20))
-#print little_g(5,math.sqrt(6)), little_g(6-math.sqrt(6), math.sqrt(6))
-print big_g_modified(20)
-
-# cumsum = 0
-# for PRIME in RELEVANT_PRIMES:
-# 	cumsum += big_g_modified(PRIME)
-# print cumsum % 1000000007
+print len(RELEVANT_PRIMES)
+cumsum = 0
+for PRIME in RELEVANT_PRIMES:
+	print PRIME
+ 	cumsum += big_g(PRIME)
+print cumsum % 1000000007
