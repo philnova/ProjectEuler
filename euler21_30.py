@@ -253,7 +253,32 @@ def longest_repeating_element(limit=1000):
 #print find_repeating_element(1.0/4)
 #print find_repeating_element(decimal.Decimal(1)/7)
 
-print longest_repeating_element()
+import fractions
+
+def find_repeating_portion(n, d):
+    x = n * 9
+    z = x
+    k = 1
+    while z % d:
+        z = z * 10 + x
+        k += 1
+    return k, z / d
+
+def find_longest_repeat(limit=1000):
+	longest_repeat = 1
+	longest_divisor = None
+	for divisor in xrange(2,limit):
+		if fractions.gcd(10,divisor) == 1: #divisor is coprime to 10
+			repeat_length = find_repeating_portion(1,divisor)[0]
+			if repeat_length > longest_repeat:
+				longest_repeat = repeat_length
+				longest_divisor = divisor
+	return longest_repeat, longest_divisor
+
+
+
+
+print find_longest_repeat()
 
 #======================================#
 
