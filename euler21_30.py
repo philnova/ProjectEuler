@@ -213,6 +213,8 @@ def string_chop(string, window):
 		return [string[0:window]]+string_chop(string[window::],window)
 
 def find_repeating_element(flt):
+	"""Turn floating point number into string and test the decimal portion
+	for repeats; return the smallest possible repeat length."""
 	flt = str(flt)[2::]
 	window_size = 1
 	while window_size < len(flt)-1:
@@ -235,6 +237,8 @@ def find_repeating_element(flt):
 	return 0
 
 def longest_repeating_element(limit=1000):
+	"""Brute force approach to finding longest repeat. Fails b/c cannot store a long enough float
+	to test for repeating elements."""
 	longest_repeat = float("-inf")
 	longest_n = None
 	for n in xrange(2,1000):
@@ -256,6 +260,9 @@ def longest_repeating_element(limit=1000):
 import fractions
 
 def find_repeating_portion(n, d):
+	"""Finds repeating portion of a non-finite repeating decimal n/d. Will run infinitely if the
+	decimal does not repeat; therefore d should be co-prime to 10, as 1/x will repeat iff
+	x is coprime to 10."""
     x = n * 9
     z = x
     k = 1
@@ -265,6 +272,7 @@ def find_repeating_portion(n, d):
     return k, z / d
 
 def find_longest_repeat(limit=1000):
+	"""Number theoretic approach to finding longest repeating decimal in 1/2 to 1/1000."""
 	longest_repeat = 1
 	longest_divisor = None
 	for divisor in xrange(2,limit):
@@ -274,8 +282,6 @@ def find_longest_repeat(limit=1000):
 				longest_repeat = repeat_length
 				longest_divisor = divisor
 	return longest_repeat, longest_divisor
-
-
 
 
 print find_longest_repeat()
