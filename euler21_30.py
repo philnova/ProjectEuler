@@ -263,13 +263,13 @@ def find_repeating_portion(n, d):
 	"""Finds repeating portion of a non-finite repeating decimal n/d. Will run infinitely if the
 	decimal does not repeat; therefore d should be co-prime to 10, as 1/x will repeat iff
 	x is coprime to 10."""
-    x = n * 9
-    z = x
-    k = 1
-    while z % d:
-        z = z * 10 + x
-        k += 1
-    return k, z / d
+	x = n * 9
+	z = x
+	k = 1
+	while z % d:
+		z = z * 10 + x
+		k += 1
+	return k, z / d
 
 def find_longest_repeat(limit=1000):
 	"""Number theoretic approach to finding longest repeating decimal in 1/2 to 1/1000."""
@@ -284,11 +284,63 @@ def find_longest_repeat(limit=1000):
 	return longest_repeat, longest_divisor
 
 
-print find_longest_repeat()
+#print find_longest_repeat()
 
 #======================================#
 
+"""
+Problem 27
 
+Euler discovered the remarkable quadratic formula:
+
+n**2 + n + 41
+
+It turns out that the formula will produce 40 primes for the consecutive values n = 0 to 39. 
+However, when n = 40, 402 + 40 + 41 = 40(40 + 1) + 41 is divisible by 41, and certainly when 
+n = 41, 41**2 + 41 + 41 is clearly divisible by 41.
+
+The incredible formula  n**2 - 79n + 1601 was discovered, which produces 80 primes for the consecutive values n = 0 to 79. 
+The product of the coefficients, -79 and 1601, is -126479.
+
+Considering quadratics of the form:
+
+n**2 + an + b, where |a| < 1000 and |b| < 1000
+
+where |n| is the modulus/absolute value of n
+e.g. |11| = 11 and |-4| = 4
+Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n = 0.
+"""
+
+def euler_quad(a,b,n):
+	return n**2 + a*n + b
+
+def is_prime(n):
+	n = abs(n)
+	for i in range(3, n):
+		if n % i == 0:
+			return False
+	return True
+
+def find_consecutive_primes(abs_limit=1000):
+	longest_prime = 0
+	best_ab = (None,None)
+	for a in xrange(-abs_limit+1,abs_limit):
+		for b in xrange(-abs_limit+1,abs_limit):
+			print a, b, longest_prime
+			n=0
+			while is_prime(euler_quad(a,b,n)):
+				n+=1
+			if n > longest_prime:
+				longest_prime = n
+				best_ab = (a,b)
+	return longest_prime, best_ab
+
+print find_consecutive_primes()
+#for i in xrange(1011):
+#	p = euler_quad(-999,61,i)
+#	print p, is_prime(p)
+
+#======================================#
 
 def all_primes(start, end):
         return list(sorted(set(range(start,end+1)).difference(set((p * f) for p in range(2, int(end ** 0.5) + 2) for f in range(2, (end/p) + 1)))))
