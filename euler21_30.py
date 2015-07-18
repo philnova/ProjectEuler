@@ -335,10 +335,105 @@ def find_consecutive_primes(abs_limit=1000):
 				best_ab = (a,b)
 	return longest_prime, best_ab
 
-print find_consecutive_primes()
+#print find_consecutive_primes()
 #for i in xrange(1011):
 #	p = euler_quad(-999,61,i)
 #	print p, is_prime(p)
+
+#======================================#
+
+"""
+Problem 28:
+
+Starting with the number 1 and moving to the right in a clockwise direction a 5 by 5 spiral is formed as follows:
+
+21 22 23 24 25
+20  7  8  9 10
+19  6  1  2 11
+18  5  4  3 12
+17 16 15 14 13
+
+It can be verified that the sum of the numbers on the diagonals is 101.
+
+What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral formed in the same way?
+"""
+
+def spiral_move(row, col, current_direction, dimension, array, round_completed):
+
+	#change direction if necessary:
+	if current_direction == "left":
+		if col==0 or (round_completed and not array[row][col-1]==[]):
+			current_direction = "down"
+
+	elif current_direction == "right":
+		if col==dimension-1 or (round_completed and not array[row][col+1]==[]):
+			current_direction = "up"
+			round_completed = True
+
+	elif current_direction == "up":
+		if row==0 or (round_completed and not array[row-1][col]==[]):
+			current_direction = "left"
+
+	elif current_direction == "down":
+		if row==dimension-1 or (round_completed and not array[row+1][col]==[]):
+			current_direction = "right"
+
+
+	if current_direction == "left":
+		col-=1	
+	elif current_direction == "right":
+		col+=1
+	elif current_direction == "up":
+		row-=1
+	elif current_direction == "down":
+		row+=1
+	else:
+		raise ValueError("Command not recognized")
+
+	return row, col, current_direction
+
+def spiral_assembler(dimension = 5):
+	spiral_array = [[[] for dummy in xrange(dimension)] for dummy2 in xrange(dimension)]
+	current_num = dimension ** 2
+	row,col = 0, dimension-1
+	current_direction = "left"
+	round_completed = False
+
+	while current_num >= 1:
+		spiral_array[row][col] = current_num
+		current_num -= 1
+		row, col, current_direction = spiral_move(row, col, current_direction, dimension, spiral_array, round_completed)
+		if current_direction == "up":
+			round_completed = True
+
+
+	
+	return spiral_array
+
+def diagonal_sum(square_array):
+	total = 0
+	row, col = 0, 0
+
+	#top left to bottom right
+	while not (row == col == len(square_array)):
+		print square_array[row][col]
+		total += square_array[row][col]
+		row+=1
+		col+=1
+
+	#top right to bottom left; skip middle
+	row, col = 0, len(square_array)-1
+	while not (row == len(square_array) and col == -1):
+		if not row == col:
+			print square_array[row][col]
+			total += square_array[row][col]
+		row+=1
+		col-=1
+
+	return total
+
+print diagonal_sum(spiral_assembler(1001))
+
 
 #======================================#
 
