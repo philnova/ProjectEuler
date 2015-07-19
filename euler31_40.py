@@ -31,3 +31,34 @@ def money_count_dynamic(target = 200, coinvals = (1, 2, 5, 10, 20, 50, 100, 200)
 
 print money_count_dynamic()
 
+#======================================#
+
+"""
+We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
+
+The product 7254 is unusual, as the identity, 39 x 186 = 7254, containing multiplicand, multiplier, and product is 1 through 9 pandigital.
+
+Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
+
+HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
+"""
+
+def is_product_pandigital(a,b):
+	c = a * b
+	a, b, c = list(str(a)), list(str(b)), list(str(c))
+	c.extend(a)
+	c.extend(b)
+	return len(c) == 9 and len(set(c)) == 9
+
+def find_all_pandigital():
+	alim = 99999
+	blim = 9999
+	total = []
+	for a in xrange(alim):
+		for b in xrange(blim):
+			if is_product_pandigital(a,b):
+				total.append((a*b))
+				print a, b
+	return sum(list(set(total)))
+
+print find_all_pandigital()
