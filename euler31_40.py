@@ -16,17 +16,17 @@ How many different ways can 2 be made using any number of coins?
 """
 
 
-def money_count_dynamic(target = 10, coinvals = (1, 2, 5, 10, 20, 50, 100, 200)):
-	ROUTES_CACHE = {i : 0 for i in xrange(target+1)}
-	for c in coinvals:
-		if c<=target:
-			ROUTES_CACHE[c]=1
-	for val in xrange(2,target+1):
-		print val
-		for c in coinvals:
-			if c!=val and val-c in ROUTES_CACHE.keys():
-				print val-c
-				ROUTES_CACHE[val]+=ROUTES_CACHE[val-c]
+def money_count_dynamic(target = 200, coinvals = (1, 2, 5, 10, 20, 50, 100, 200)):
+	ROUTES_CACHE = [[0 for c in coinvals] for t in xrange(target+1)]
+	for row in ROUTES_CACHE:
+		row[0] = 1
+	ROUTES_CACHE[0] = [1 for c in coinvals]
+	for row_idx in range(1,target+1):
+		for col_idx in range(1,len(ROUTES_CACHE[row_idx])):
+			if 0 <= row_idx - coinvals[col_idx] <= target:
+				ROUTES_CACHE[row_idx][col_idx] = ROUTES_CACHE[row_idx][col_idx-1] + ROUTES_CACHE[row_idx - coinvals[col_idx]][col_idx]
+			else:
+				ROUTES_CACHE[row_idx][col_idx] = ROUTES_CACHE[row_idx][col_idx-1]
 	return ROUTES_CACHE
 
 print money_count_dynamic()
