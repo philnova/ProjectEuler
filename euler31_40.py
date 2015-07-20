@@ -314,7 +314,7 @@ DIGITS = '1 2 3 4 5 6 7 8 9'.split()
 print DIGITS
 
 def find_all_pandigital():
-	return [i for i in reversed(sorted(["".join(seq) for seq in itertools.permutations(DIGITS,len(DIGITS))])) if int(i) >= 918273645]
+	return [i for i in reversed(sorted(["".join(seq) for seq in itertools.permutations(DIGITS,len(DIGITS))])) if int(i) >= 918273645] #include lower limit since it is given in problem
 
 def is_expressable_as_concat(n_string):
 	terms = len(n_string)
@@ -345,4 +345,26 @@ def largest_pandigital_concatenated():
 #print largest_pandigital_concatenated()
 
 #======================================#
+
+def is_triangle_valid(a,b,c):
+	return a**2 + b**2 == c**2
+
+def find_maximal_soln(limit=1000):
+	max_solutions, max_peri = 0, 0
+	for perimeter in xrange(3,limit):
+		solution_space = []
+		#print perimeter, max_solutions
+		for a in xrange(1,perimeter-1):
+			for b in xrange(1, perimeter-a+1):
+				#print perimeter, a+b+(perimeter-a-b), 'flag'
+				if a + b + (perimeter-a-b) == perimeter and is_triangle_valid(a,b,perimeter-a-b):
+					solution_space.append(a*b*(perimeter-a-b))
+		if len(set(solution_space))>max_solutions:
+			
+			max_solutions, max_peri = len(set(solution_space)), perimeter
+			#print max_solutions, max_peri
+	return max_peri, max_solutions
+
+print find_maximal_soln()
+
 
