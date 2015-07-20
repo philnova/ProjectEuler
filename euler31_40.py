@@ -1,5 +1,6 @@
 import time
 import math
+import itertools
 
 #======================================#
 
@@ -210,4 +211,108 @@ def find_all_twobase_palindrome(limit=1000000):
 			total += n
 	return total
 
-print find_all_twobase_palindrome()
+#print find_all_twobase_palindrome()
+
+#======================================#
+
+"""
+Problem 37:
+
+The number 3797 has an interesting property. Being prime itself, it is possible to continuously remove digits from left to right, and remain prime at each stage: 3797, 797, 97, and 7. Similarly we can work from right to left: 3797, 379, 37, and 3.
+
+Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+
+NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
+"""
+
+ONE_DIGIT_PRIMES = [2, 3, 5, 7]
+
+def is_prime(n):
+	"""Input odd numbers only"""
+	if n in (0,1):
+		return False
+	elif n in ONE_DIGIT_PRIMES:
+		return True
+	for i in range(3, n):
+		if n % i == 0:
+			return False
+	return True
+
+BASE_ELEMENTS = [1,3,7,9]
+BASE_STRINGS = ['1','2','3','5','7','9']
+
+def all_length_n_permutations(iterable,length):
+	return ["".join(seq) for seq in itertools.product(iterable,repeat=length)]
+
+#print all_length_n_permutations(BASE_STRINGS,3)
+
+def left_truncate(string):
+	return string[1::]
+
+def right_truncate(string):
+	return string[:-1]
+
+def is_truncateable_prime(n_string):
+	n_string_L = ''.join([i for i in n_string])
+	n_string_R = ''.join([i for i in n_string])
+	while n_string_L and n_string_R:
+		#print n_string_L, n_string_R
+		#print is_prime(int(n_string_L)), is_prime(int(n_string_R))
+		if is_prime(int(n_string_L)) and is_prime(int(n_string_R)):
+			n_string_L = left_truncate(n_string_L)
+			n_string_R = right_truncate(n_string_R)
+
+		else:
+			return False
+	return True
+
+#print is_truncateable_prime('111')
+#print is_truncateable_prime('37')
+#print is_truncateable_prime('39397')
+#print is_truncateable_prime('739397')
+
+#print is_prime(3939)
+
+
+#print left_truncate("abc")
+#print right_truncate("abc")
+
+def find_all_truncated_primes(limit=11):
+	prime_list = []
+	counter = 2
+	while not len(prime_list) == limit:
+		print counter
+		potentials = all_length_n_permutations(BASE_STRINGS,counter)
+		for p in potentials:
+			if is_truncateable_prime(p):
+				prime_list.append(p)
+				print p
+		counter+=1
+	return prime_list, sum(prime_list)
+
+#print find_all_truncated_primes()
+
+#======================================#
+
+"""
+Problem 38:
+
+"""
+
+DIGITS = '1 2 3 4 5 6 7 8 9'.split()
+print DIGITS
+
+def find_all_pandigital():
+	return [i for i in reversed(sorted(["".join(seq) for seq in itertools.permutations(DIGITS,len(DIGITS))]))]
+
+def is_expressable_as_concat(n_string):
+	return True
+
+def largest_pandigital_concatenated():
+	all_pandigital = find_all_pandigital()
+	for pan in all_pandigital:
+		if is_expressable_as_concat(pan):
+			return pan
+
+print largest_pandigital_concatenated()
+
