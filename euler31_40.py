@@ -297,22 +297,52 @@ def find_all_truncated_primes(limit=11):
 """
 Problem 38:
 
+Take the number 192 and multiply it by each of 1, 2, and 3:
+
+192 x 1 = 192
+192 x 2 = 384
+192 x 3 = 576
+By concatenating each product we get the 1 to 9 pandigital, 192384576. We will call 192384576 the concatenated product of 192 and (1,2,3)
+
+The same can be achieved by starting with 9 and multiplying by 1, 2, 3, 4, and 5, giving the pandigital, 918273645, which is the concatenated product of 9 and (1,2,3,4,5).
+
+What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated product of an integer with (1,2, ... , n) where n > 1?
+
 """
 
 DIGITS = '1 2 3 4 5 6 7 8 9'.split()
 print DIGITS
 
 def find_all_pandigital():
-	return [i for i in reversed(sorted(["".join(seq) for seq in itertools.permutations(DIGITS,len(DIGITS))]))]
+	return [i for i in reversed(sorted(["".join(seq) for seq in itertools.permutations(DIGITS,len(DIGITS))])) if int(i) >= 918273645]
 
 def is_expressable_as_concat(n_string):
-	return True
+	terms = len(n_string)
+	while terms >= 2:
+		termrange = [i for i in xrange(1,terms+1)]
+		total = '0'
+		factor = 1
+		while not int(total) > int(n_string):
+			total = ''.join([str(i * factor) for i in termrange])
+			#print total
+			if int(total) == int(n_string):
+				return True #, terms, factor
+			factor += 1
+		terms-=1
+	return False
+
+#print is_expressable_as_concat('192384567')
+
+#print len(find_all_pandigital())
 
 def largest_pandigital_concatenated():
 	all_pandigital = find_all_pandigital()
 	for pan in all_pandigital:
+		print pan
 		if is_expressable_as_concat(pan):
 			return pan
 
-print largest_pandigital_concatenated()
+#print largest_pandigital_concatenated()
+
+#======================================#
 
