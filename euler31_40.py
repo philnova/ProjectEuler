@@ -353,7 +353,7 @@ If p is the perimeter of a right angle triangle with integral length sides, {a,b
 
 {20,48,52}, {24,45,51}, {30,40,50}
 
-For which value of p ≤ 1000, is the number of solutions maximised?
+For which value of p <= 1000, is the number of solutions maximised?
 """
 
 def is_triangle_valid(a,b,c):
@@ -375,6 +375,34 @@ def find_maximal_soln(limit=1000):
 			#print max_solutions, max_peri
 	return max_peri, max_solutions
 
-print find_maximal_soln()
+#print find_maximal_soln()
 
+#======================================#
 
+"""
+Problem 40:
+
+An irrational decimal fraction is created by concatenating the positive integers:
+
+0.123456789101112131415161718192021...
+
+It can be seen that the 12th digit of the fractional part is 1.
+
+If dn represents the nth digit of the fractional part, find the value of the following expression.
+
+d1 x d10 x d100 x d1000 x d10000 x d100000 x d1000000
+"""
+
+def champernownes_constant(digits = 1000000):
+	constant = ''
+	counter = 1
+	while len(constant) < digits:
+		constant += str(counter)
+		counter += 1
+
+	total = 1
+	for target in (0,9,99,999,9999,99999,999999):
+		total *= int(constant[target])
+	return total
+
+#print champernownes_constant()
