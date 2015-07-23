@@ -169,7 +169,7 @@ def check_pentagonal(limit1=1000, limit2=10000):
 	altern_pentagonals = []
 	for dummy in xrange(limit2-limit1):
 		altern_pentagonals.append(g.next())
-		
+
 	smallest_distance = float('inf')
 	for idx1, p1 in enumerate(pentagonals):
 		for idx2, p2 in enumerate(pentagonals):
@@ -181,5 +181,28 @@ def check_pentagonal(limit1=1000, limit2=10000):
 
 	return smallest_distance
 
-print check_pentagonal()
+#print check_pentagonal()
 
+## New approach: instead of listing pentagonals, use the inverse function to test whether a number is pentagonal
+
+def is_n_pentagonal(n):
+	"""n is pentagonal if the inverse pentagonal function returns an integer"""
+	pen_test = (math.sqrt(24*n+1)+1)/6.0
+	return pen_test == float(int(pen_test))
+
+notfound = True
+result = 0
+i=1
+
+while notfound:
+	i+=1
+	n = i * (3*i-1)/2.0
+
+	for j in xrange(i-1,0,-1):
+		m = j * (3*j-1)/2.0
+		if is_n_pentagonal(abs(n-m)) and is_n_pentagonal(n+m):
+			result = n-m
+			notfound = False
+			break
+
+print result, i
