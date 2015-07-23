@@ -160,18 +160,22 @@ def gen_pentagonal():
 		yield counter * (3*counter-1)/2
 		counter+=1
 
-def check_pentagonal(limit=10000):
+def check_pentagonal(limit1=1000, limit2=10000):
 	g = gen_pentagonal()
 	pentagonals = []
-	for dummy in xrange(limit):
+	for dummy in xrange(limit1):
 		pentagonals.append(g.next())
 
+	altern_pentagonals = []
+	for dummy in xrange(limit2-limit1):
+		altern_pentagonals.append(g.next())
+		
 	smallest_distance = float('inf')
 	for idx1, p1 in enumerate(pentagonals):
 		for idx2, p2 in enumerate(pentagonals):
 			if not idx1==idx2:
-				print p1+p2, abs(p1-p2), p1+p2 in pentagonals, abs(p1-p2) in pentagonals
-				if (p1+p2 in pentagonals) and (abs(p1-p2) in pentagonals):
+				print p1+p2, abs(p1-p2), p1+p2 in pentagonals or p1+p2 in altern_pentagonals, abs(p1-p2) in pentagonals or abs(p1-p2) in altern_pentagonals
+				if (p1+p2 in pentagonals or p1+p2 in altern_pentagonals) and (abs(p1-p2) in pentagonals or abs(p1-p2) in altern_pentagonals):
 					if abs(idx1-idx2) < smallest_distance:
 						smallest_distance = abs(idx1-idx2)
 
