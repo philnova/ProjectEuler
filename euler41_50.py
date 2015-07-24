@@ -306,4 +306,17 @@ def find_consecutive_prime_factors(length=4):
 
 #======================================#
 
+"""
+Problem 48:
 
+The series, 11 + 22 + 33 + ... + 1010 = 10405071317.
+
+Find the last ten digits of the series, 11 + 22 + 33 + ... + 10001000.
+"""
+
+def self_powers(limit=1001):
+	total = 0
+	for i in xrange(1,limit):
+		total+=i**i
+	return total
+#print self_powers()
