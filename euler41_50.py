@@ -365,8 +365,8 @@ def digits_in_iter(iterable):
 			seen_so_far.append(char)
 	return len(set(seen_so_far))
 
-print digits_in_iter((1234,1342))
-print digits_in_iter((1234,1542))
+#print digits_in_iter((1234,1342))
+#print digits_in_iter((1234,1542))
 
 def increasing_prime_sequence():
 	answers = []
@@ -383,4 +383,42 @@ def increasing_prime_sequence():
 def increasing_prime_permutations():
 	return [i for i in increasing_prime_sequence() if are_permutations(i)]
 
-print increasing_prime_permutations()
+#print increasing_prime_permutations()
+
+#======================================#
+
+"""
+Problem 50:
+The prime 41, can be written as the sum of six consecutive primes:
+
+41 = 2 + 3 + 5 + 7 + 11 + 13
+This is the longest sum of consecutive primes that adds to a prime below one-hundred.
+
+The longest sum of consecutive primes below one-thousand that adds to a prime, contains 21 terms, and is equal to 953.
+
+Which prime, below one-million, can be written as the sum of the most consecutive primes?
+"""
+
+def all_primes(start, end):
+        return list(sorted(set(range(start,end+1)).difference(set((p * f) for p in range(2, int(end ** 0.5) + 2) for f in range(2, (end/p) + 1)))))
+
+def longest_prime_sequence(limit=1000000):
+	primes = all_primes(2,limit)
+	max_length = 0
+	top_prime = 2
+
+	#slide a window
+	for start_idx, start_prime in enumerate(primes):
+		total = [start_prime]
+		counter = 1
+		while sum(total) < limit:
+			total.append(primes[start_idx+counter])
+			counter+=1
+			if is_prime(sum(total)) and len(total) > max_length:
+				max_length = len(total)
+				top_prime = sum(total)
+				print top_prime, max_length
+	return top_prime, max_length
+
+
+#print longest_prime_sequence()
