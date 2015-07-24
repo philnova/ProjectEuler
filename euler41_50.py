@@ -320,3 +320,67 @@ def self_powers(limit=1001):
 		total+=i**i
 	return total
 #print self_powers()
+
+#======================================#
+
+"""
+Problem 49:
+
+The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways: (i) each of the three terms are prime, and, (ii) each of the 4-digit numbers are permutations of one another.
+
+There are no arithmetic sequences made up of three 1-, 2-, or 3-digit primes, exhibiting this property, but there is one other 4-digit increasing sequence.
+
+What 12-digit number do you form by concatenating the three terms in this sequence?
+"""
+
+def is_prime(n):
+	if n in (0,1):
+		return False
+	if n % 2 == 0:
+		return False
+	for i in range(3, n):
+		if n % i == 0:
+			return False
+	return True
+
+DIGITS = "1 2 3 4 5 6 7 8 9".split()
+DIGITS = DIGITS * 2
+
+def gen_all_ndigit(n_digits):
+	return [i for i in sorted(["".join(seq) for seq in itertools.permutations(DIGITS,n_digits)])]
+
+def all_four_digit_primes():
+	return [int(n) for n in gen_all_ndigit(4) if is_prime(int(n))]
+
+def are_permutations(tup):
+	"""Return true if all members of a tuple are permutations of each other"""
+	possibilities = [int("".join(i)) for i in itertools.permutations(str(tup[0]))]
+	return all([i in possibilities for i in tup])
+
+def digits_in_iter(iterable):
+	"""Return the total number of digits in an iterable"""
+	seen_so_far = []
+	for item in iterable:
+		for char in str(item):
+			seen_so_far.append(char)
+	return len(set(seen_so_far))
+
+print digits_in_iter((1234,1342))
+print digits_in_iter((1234,1542))
+
+def increasing_prime_sequence():
+	answers = []
+	primes = set(all_four_digit_primes())
+	print len(primes)
+	for idx1, prime1 in enumerate(primes):
+		for idx2, prime2 in enumerate(primes):
+			if idx1!=idx2 and prime2>prime1 and abs(prime1-prime2)+prime2 in primes:
+				answers.append((prime1, prime2, abs(prime1-prime2)+prime2))
+			elif idx1!=idx2 and prime2<prime1 and abs(prime1-prime2)+prime1 in primes:
+				answers.append((prime2, prime1, abs(prime1-prime2)+prime1))
+	return set(answers)
+
+def increasing_prime_permutations():
+	return [i for i in increasing_prime_sequence() if are_permutations(i)]
+
+print increasing_prime_permutations()
