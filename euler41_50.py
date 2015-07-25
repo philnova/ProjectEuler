@@ -420,5 +420,4 @@ def longest_prime_sequence(limit=1000000):
 				print top_prime, max_length
 	return top_prime, max_length
 
-
 #print longest_prime_sequence()
