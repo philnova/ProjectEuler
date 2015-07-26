@@ -26,11 +26,14 @@ def is_prime(n):
 			return False
 	return True
 
-def n_replace(string, digits_to_replace,digit):
+def n_replace(string, digits_to_replace):
 	"""Given str string and int digits_to_replace, replace digits_to_replace characters in string
 	with the same digit from the list DIGITS."""
 	assert digits_to_replace<=len(string)
 	possible_positions = [i for i in itertools.combinations(xrange(len(string)),digits_to_replace)]
+	return possible_positions
+
+def p():
 	strings = []
 	for poss in possible_positions:
 			nustring = string[:]
@@ -43,22 +46,35 @@ def n_replace(string, digits_to_replace,digit):
 #expect 100 (10 possible positionings for 3 replacements; 10 digits); output was 100
 
 
-def find_smallest_switchable_prime(prime_target=6):
-	n = 11
+def find_smallest_switchable_prime(prime_target=8):
+	n = 120371
 	while True:
 		if is_prime(n):
+			print n
 			for l in xrange(1,len(str(n))):
-				print l
-				possible_prime_strings = []
-				prime_sum = 0
-				for digit in DIGITS:
-					possible_prime_strings += [int(i) for i in n_replace(str(n),l,digit)]
-					print possible_prime_strings
-					prime_sum += sum([int(is_prime(i)) for i in possible_prime_strings])
-				if sum(possible_prime_strings) >= prime_target:
-						return n
+				possible_positions = n_replace(str(n),l)
+				for poss in possible_positions:
+					potential_primes = []
+					for d in DIGITS:
+						new_num = str(n)
+						for p in poss:
+							new_num = new_num[0:p]+d+new_num[p+1::] 
+						potential_primes.append(new_num)
+					#check number of primes
+					potential_primes = [i for i in potential_primes if len(str(int(i)))==len(str(n))]
+					prime_bools = [is_prime(int(num)) for num in potential_primes]
+					prime_sum = sum([int(is_prime(int(num))) for num in potential_primes])
+					if prime_sum>=prime_target:
+						return n, potential_primes, prime_bools
+				
 		n += 2
-		print n
+		#print n
+
+#print is_prime(56003)
+
+#n, p, b = find_smallest_switchable_prime()
+#for idx, i in enumerate(p):
+#	print i, b[idx]
 
 print find_smallest_switchable_prime()
 
