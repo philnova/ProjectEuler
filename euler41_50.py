@@ -254,6 +254,80 @@ def find_tri_pen_hex():
 
 #======================================#
 
+"""
+Problem 46:
+It was proposed by Christian Goldbach that every odd composite number can be written as the sum of a prime and twice a square.
+
+9 = 7 + 2x12
+15 = 7 + 2x22
+21 = 3 + 2x32
+25 = 7 + 2x32
+27 = 19 + 2x22
+33 = 31 + 2x12
+
+It turns out that the conjecture was false.
+
+What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
+"""
+
+def all_primes(start, end):
+        primes = list(sorted(set(range(start,end+1)).difference(set((p * f) for p in range(2, int(end ** 0.5) + 2) for f in range(2, (end/p) + 1)))))
+        if 1 in primes:
+        	primes.remove(1)
+        return primes
+
+def all_twice_squares(start,end):
+	squares = []
+	for n in xrange(start,end+1):
+		#print n, 2*(n**2)
+		#if 2*(n**2) <= end:
+		squares.append(2*(n**2))
+	return list(sorted(squares))
+
+PRIME_LIST = []
+SQUARES_LIST = []
+PREV_LIMIT = 1
+
+def extend_primes_and_squares(limit):
+	"""Fill out the PRIME_LIST and SQUARES_LIST with all primes and perfect squares below
+	the provided integer, limit."""
+	global PREV_LIMIT
+	PRIME_LIST.extend(all_primes(PREV_LIMIT,limit))
+	SQUARES_LIST.extend(all_twice_squares(PREV_LIMIT,limit))
+	PREV_LIMIT = limit
+
+#print PRIME_LIST, SQUARES_LIST
+#extend_primes_and_squares(10)
+#print PRIME_LIST, SQUARES_LIST
+#extend_primes_and_squares(50)
+#print PRIME_LIST, SQUARES_LIST
+
+def test_conjecture(n):
+	if not is_prime(n):
+		extend_primes_and_squares(n)
+		for p in PRIME_LIST:
+				for s in SQUARES_LIST:
+					if p+s == n:
+						return True
+		return False
+	else:
+		return True
+
+#print test_conjecture(9)
+#print test_conjecture(15)
+
+def disprove_conjecture():
+	n = 3
+	while True:
+		print n
+		if not test_conjecture(n):
+			return n
+		else:
+			n+=2
+
+print disprove_conjecture()
+print PRIME_LIST, SQUARES_LIST
+
 #======================================#
 
 """
