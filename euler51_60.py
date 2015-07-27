@@ -196,37 +196,160 @@ class Card(object):
 		self.suit = suit
 		self.value = value
 
+FACE_DICT = {'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+
 class PokerHand(object):
 
 	def __init__(self, card_list):
-		self.cards = card_list
-		self.suits = []
+		self.cards = card_list #formatted as [5D, 5S, KD, etc.]
+		self.suits = len(set([i[1] for i in self.cards]))
+		self.count_cards()
+		
+	def count_cards(self):
 		self.values = []
+		for i in self.cards:
+			try:
+				self.values.append(int(i[0]))
+			except:
+				self.values.append(FACE_DICT[i]) #if card is face card, convert to numerical value
+		self.values = [i for i in sorted(values)]
+
+		self.value_to_frequency = {}
+		for val in values:
+			try:
+				self.value_to_frequency[val]+=1
+			except KeyError:
+				self.value_to_frequency[val]=1
+
+		self.frequency_to_value = {v:k for k,v in self.value_to_frequency.iteritems()}
 
 	def has_straight_flush(self):
 		return self.has_flush() and self.has_straight()
 
 	def has_four(self):
-		pass
+		if 4 in self.frequency_to_value.keys():
+			self.four_val = self.frequency_to_value[4]
+			self.next_highest = self.frequency_to_value[1] #self.next_highest stores sorted list (hi to lo) of remaining cards
+			return True
+		return False
 
 	def has_full_house(self):
-		pass
+		if 3 in self.frequency_to_value.keys() and 2 in self.frequency_to_value.keys():
+			self.triple = self.frequency_to_value[3]
+			self.pair = self.frequency_to_value[2]
+			return True
+		return False
 
 	def has_flush(self):
-		pass
+		return self.suits == 1
 
 	def has_straight(self):
-		pass
+		for idx in xrange(len(self.values)-1):
+			if not self.values[idx] + 1 == self.values[idx+1]: #REMEMBER TO USE NUMERICAL VALUES FOR FACE CARDS
+				return False
+		return True 
 
 	def has_three(self):
-		pass
+		if 3 in self.frequency_to_value.keys():
+			self.three_val = self.frequency_to_value[3]
+			self.next_highest = [g for g in sorted([i for i in self.values if not i==self.three_val])] #next_highest will be in reversed sorted order, e.g. [2,3]
+			return True
+		return False
 
 	def has_two_pair(self):
-		pass
+		if 2 in self.frequency_to_value.keys() and len(self.frequency_to_value[2])==2:
+			lo, hi = [i for i in sorted(self.frequency_to_value[2])]
+			self.higher_pair = hi
+			self.lower_pair = lo
+			self.next_highest = self.frequency_to_value[1]
+			return True
+		return False
 
 	def has_pair(self):
-		pass
+		if 2 in self.frequency_to_value.keys():
+			self.pair_val = self.frequency_to_value[2]
+			self.next_highest = [g for g in sorted([i for i in self.values if not i==self.pair_val])]
+
+	def best(self):
+		"""Return a string representing the value of the best hand."""
+		if self.has_straight_flush():
+			return "straight_flush"
+		elif self.has_four():
+			return "four_of_a_kind"
+		elif self.has_full_house():
+			return "full_house"
+		elif self.has_flush():
+			return  "flush"
+		elif self.has_straight():
+			return "straight"
+		elif self.has_three():
+			return "three_of_a_kind"
+		elif self.has_two_pair():
+			return "two_pair"
+		elif self.has_pair():
+			return "pair"
+		else:
+			return "high card"
 
 	def compare(self, other):
 		"""Return True if self wins the hand. Return False if other wins."""
 		pass
+
+#======================================#
+
+"""
+Problem 55:
+
+If we take 47, reverse and add, 47 + 74 = 121, which is palindromic.
+
+Not all numbers produce palindromes so quickly. For example,
+
+349 + 943 = 1292,
+1292 + 2921 = 4213
+4213 + 3124 = 7337
+
+That is, 349 took three iterations to arrive at a palindrome.
+
+Although no one has proved it yet, it is thought that some numbers, like 196, never produce a palindrome. A number that never forms a palindrome through the reverse and add process is called a Lychrel number. Due to the theoretical nature of these numbers, and for the purpose of this problem, we shall assume that a number is Lychrel until proven otherwise. In addition you are given that for every number below ten-thousand, it will either (i) become a palindrome in less than fifty iterations, or, (ii) no one, with all the computing power that exists, has managed so far to map it to a palindrome. In fact, 10677 is the first number to be shown to require over fifty iterations before producing a palindrome: 4668731596684224866951378664 (53 iterations, 28-digits).
+
+Surprisingly, there are palindromic numbers that are themselves Lychrel numbers; the first example is 4994.
+
+How many Lychrel numbers are there below ten-thousand?
+
+NOTE: Wording was modified slightly on 24 April 2007 to emphasise the theoretical nature of Lychrel numbers.
+"""
+
+def is_palindrome(n):
+	if len(str(n))==1:
+		return False
+	return n == int(''.join(reversed([i for i in str(n)])))
+
+def reverse_and_add(n):
+	n_rev = int(''.join([i for i in reversed(str(n))]))
+	return n+n_rev
+
+def test_lychrel(n, limit=50):
+	n_iterations = 0
+	while n_iterations < limit:
+		n = reverse_and_add(n)
+		n_iterations+=1
+		if is_palindrome(n):
+			return True, n_iterations, n
+	return False, limit, n
+
+#print test_lychrel(4994)
+#print test_lychrel(349)
+print test_lychrel(9998)
+print test_lychrel(196)
+for i in xrange(10):
+	print i, test_lychrel(i)
+
+def find_lychrel(limit=10000):
+	n_lychrel = 0
+	for n in xrange(1,limit):
+		if not test_lychrel(n)[0]:
+			n_lychrel+=1
+			print n
+	return n_lychrel
+
+print find_lychrel()
