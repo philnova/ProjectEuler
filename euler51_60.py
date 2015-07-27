@@ -76,6 +76,157 @@ def find_smallest_switchable_prime(prime_target=8):
 #for idx, i in enumerate(p):
 #	print i, b[idx]
 
-print find_smallest_switchable_prime()
+#print find_smallest_switchable_prime()
 
+#======================================#
 
+"""
+Problem 52:
+
+It can be seen that the number, 125874, and its double, 251748, contain exactly the same digits, but in a different order.
+
+Find the smallest positive integer, x, such that 2x, 3x, 4x, 5x, and 6x, contain the same digits.
+"""
+
+def digits_in_n(n):
+	"""Return a list of digits in integer n"""
+	return [i for i in sorted([char for char in str(n)])]
+
+#print digits_in_n(534)
+#print digits_in_n(534)==digits_in_n(345)
+#print digits_in_n(534)==digits_in_n(344)
+
+def find_n():
+	n=1
+	while True:
+		print n
+		test_list = [i * n for i in xrange(2,7)]
+		n_digits = digits_in_n(n)
+		if all([digits_in_n(i)==n_digits for i in test_list]):
+			return n
+		n+=1
+
+#print find_n()
+
+#======================================#
+
+"""
+Problem 53:
+
+"""
+
+def choose(n,r):
+	"""For integers n and r, return number of ways of choosing r items from n."""
+	return float(math.factorial(n))/(math.factorial(r) * math.factorial(n-r))
+
+#print choose(5,3)
+def does_choosen_exceed_limit(n,limit=1000000):
+	total=0
+	for r in xrange(n,1,-1):
+		if choose(n,r)>limit:
+			total+=1
+	return total
+
+#total = 0
+#for i in xrange(1,101):
+#	total+=does_choosen_exceed_limit(i)
+#print total
+
+#======================================#
+
+"""
+Problem 54:
+
+In the card game poker, a hand consists of five cards and are ranked, from lowest to highest, in the following way:
+
+High Card: Highest value card.
+One Pair: Two cards of the same value.
+Two Pairs: Two different pairs.
+Three of a Kind: Three cards of the same value.
+Straight: All cards are consecutive values.
+Flush: All cards of the same suit.
+Full House: Three of a kind and a pair.
+Four of a Kind: Four cards of the same value.
+Straight Flush: All cards are consecutive values of same suit.
+Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
+The cards are valued in the order:
+2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+
+If two players have the same ranked hands then the rank made up of the highest value wins; for example, a pair of eights beats a pair of fives (see example 1 below). But if two ranks tie, for example, both players have a pair of queens, then highest cards in each hand are compared (see example 4 below); if the highest cards tie then the next highest cards are compared, and so on.
+
+Consider the following five hands dealt to two players:
+
+Hand	 	Player 1	 	Player 2	 	Winner
+1	 	5H 5C 6S 7S KD
+Pair of Fives
+ 	2C 3S 8S 8D TD
+Pair of Eights
+ 	Player 2
+2	 	5D 8C 9S JS AC
+Highest card Ace
+ 	2C 5C 7D 8S QH
+Highest card Queen
+ 	Player 1
+3	 	2D 9C AS AH AC
+Three Aces
+ 	3D 6D 7D TD QD
+Flush with Diamonds
+ 	Player 2
+4	 	4D 6S 9H QH QC
+Pair of Queens
+Highest card Nine
+ 	3D 6D 7H QD QS
+Pair of Queens
+Highest card Seven
+ 	Player 1
+5	 	2H 2D 4C 4D 4S
+Full House
+With Three Fours
+ 	3C 3D 3S 9S 9D
+Full House
+with Three Threes
+ 	Player 1
+The file, poker.txt, contains one-thousand random hands dealt to two players. Each line of the file contains ten cards (separated by a single space): the first five are Player 1's cards and the last five are Player 2's cards. You can assume that all hands are valid (no invalid characters or repeated cards), each player's hand is in no specific order, and in each hand there is a clear winner.
+
+How many hands does Player 1 win?
+"""
+
+class Card(object):
+	def __init__(self, suit, value):
+		self.suit = suit
+		self.value = value
+
+class PokerHand(object):
+
+	def __init__(self, card_list):
+		self.cards = card_list
+		self.suits = []
+		self.values = []
+
+	def has_straight_flush(self):
+		return self.has_flush() and self.has_straight()
+
+	def has_four(self):
+		pass
+
+	def has_full_house(self):
+		pass
+
+	def has_flush(self):
+		pass
+
+	def has_straight(self):
+		pass
+
+	def has_three(self):
+		pass
+
+	def has_two_pair(self):
+		pass
+
+	def has_pair(self):
+		pass
+
+	def compare(self, other):
+		"""Return True if self wins the hand. Return False if other wins."""
+		pass
