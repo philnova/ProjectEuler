@@ -2,6 +2,7 @@ import time
 import math
 import itertools
 
+
 #======================================#
 
 """
@@ -491,4 +492,68 @@ def find_lychrel(limit=10000):
 
 #======================================#
 
+"""
+Problem 56:
+
+A googol (10**100) is a massive number: one followed by one-hundred zeros; 100100 is almost unimaginably large: one followed by two-hundred zeros. Despite their size, the sum of the digits in each number is only 1.
+
+Considering natural numbers of the form, ab, where a, b < 100, what is the maximum digital sum?
+"""
+
+def digital_sum(n):
+	return sum([int(char) for char in str(n)])
+
+def find_max_digital(limit=100):
+	maximum = 0
+	for a in xrange(1,limit):
+		for b in xrange(1,limit):
+			current = a**b
+			if digital_sum(current) > maximum:
+				maximum = digital_sum(current)
+	return maximum
+
+#print find_max_digital()
+
+#======================================#
+
+"""
+Problem 57:
+"""
+
+from pyparse import NumericStringParser
+from fractions import Fraction
+import sys
+sys.setrecursionlimit(1500)
+
+def expansion():
+	current = '1+1/2'
+	
+	while True:
+		yield current
+		current = current[0:current.rfind('2')] + '(2+1/2)' + current[current.rfind('2')+1::]
+		
+
+def write_to_file(filename, limit):
+	gen = expansion()
+	with open(filename, 'a') as fo:
+		for dummy in xrange(limit):
+			print gen.next()
+			fo.write('h'+str(dummy)+'='+gen.next())
+			fo.write('\n')
+
+write_to_file('test.txt',1000)
+
+
+def digit_count_expansion(limit=1000):
+	gen = expansion()
+	counter = 0
+	nsp=NumericStringParser()
+	for i in xrange(limit):
+		current_fraction = nsp.eval(gen.next())
+		numerator, denominator = Fraction(current_fraction).numerator, Fraction(current_fraction).denominator
+		if len(str(numerator)) > len(str(denominator)):
+			counter += 1
+	return counter
+
+#print digit_count_expansion(1000)
 
