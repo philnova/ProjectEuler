@@ -325,8 +325,7 @@ def disprove_conjecture():
 		else:
 			n+=2
 
-print disprove_conjecture()
-print PRIME_LIST, SQUARES_LIST
+#print disprove_conjecture()
 
 #======================================#
 

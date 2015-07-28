@@ -196,63 +196,73 @@ class Card(object):
 		self.suit = suit
 		self.value = value
 
-FACE_DICT = {'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+FACE_DICT = {'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
 
 class PokerHand(object):
 
 	def __init__(self, card_list):
 		self.cards = card_list #formatted as [5D, 5S, KD, etc.]
-		self.suits = len(set([i[1] for i in self.cards]))
+		self.suits = len(set([i[-1] for i in self.cards]))
 		self.count_cards()
 		
 	def count_cards(self):
 		self.values = []
 		for i in self.cards:
 			try:
-				self.values.append(int(i[0]))
+				self.values.append(int(i[0:-1]))
 			except:
-				self.values.append(FACE_DICT[i]) #if card is face card, convert to numerical value
-		self.values = [i for i in sorted(values)]
+				self.values.append(FACE_DICT[i[0:-1]]) #if card is face card, convert to numerical value
+		self.values = [i for i in sorted(self.values)]
 
 		self.value_to_frequency = {}
-		for val in values:
+		for val in self.values:
 			try:
 				self.value_to_frequency[val]+=1
 			except KeyError:
 				self.value_to_frequency[val]=1
 
-		self.frequency_to_value = {v:k for k,v in self.value_to_frequency.iteritems()}
+		self.frequency_to_value = {}
+		for k,v in self.value_to_frequency.iteritems():
+			try:
+				self.frequency_to_value[v].append(k)
+			except KeyError:
+				self.frequency_to_value[v] = [k,]
 
 	def has_straight_flush(self):
 		return self.has_flush() and self.has_straight()
 
 	def has_four(self):
 		if 4 in self.frequency_to_value.keys():
-			self.four_val = self.frequency_to_value[4]
+			self.four_val = self.frequency_to_value[4][0]
 			self.next_highest = self.frequency_to_value[1] #self.next_highest stores sorted list (hi to lo) of remaining cards
 			return True
 		return False
 
 	def has_full_house(self):
 		if 3 in self.frequency_to_value.keys() and 2 in self.frequency_to_value.keys():
-			self.triple = self.frequency_to_value[3]
-			self.pair = self.frequency_to_value[2]
+			self.triple = self.frequency_to_value[3][0]
+			self.pair = self.frequency_to_value[2][0]
 			return True
 		return False
 
 	def has_flush(self):
-		return self.suits == 1
+		if self.suits == 1:
+			self.highest_value = self.values[-1]
+			return True
+		else:
+			return False
 
 	def has_straight(self):
 		for idx in xrange(len(self.values)-1):
 			if not self.values[idx] + 1 == self.values[idx+1]: #REMEMBER TO USE NUMERICAL VALUES FOR FACE CARDS
 				return False
+		self.highest_value = self.values[-1]
 		return True 
 
 	def has_three(self):
 		if 3 in self.frequency_to_value.keys():
-			self.three_val = self.frequency_to_value[3]
-			self.next_highest = [g for g in sorted([i for i in self.values if not i==self.three_val])] #next_highest will be in reversed sorted order, e.g. [2,3]
+			self.three_val = self.frequency_to_value[3][0]
+			self.next_highest = [g for g in reversed(sorted([i for i in self.values if not i==self.three_val]))] #next_highest will be in reversed sorted order, e.g. [2,3]
 			return True
 		return False
 
@@ -267,33 +277,158 @@ class PokerHand(object):
 
 	def has_pair(self):
 		if 2 in self.frequency_to_value.keys():
-			self.pair_val = self.frequency_to_value[2]
-			self.next_highest = [g for g in sorted([i for i in self.values if not i==self.pair_val])]
+			self.pair_val = self.frequency_to_value[2][0]
+			self.next_highest = [g for g in reversed(sorted([i for i in self.values if not i==self.pair_val]))]
+			return True
+		return False
 
 	def best(self):
 		"""Return a string representing the value of the best hand."""
 		if self.has_straight_flush():
-			return "straight_flush"
+			return 9
 		elif self.has_four():
-			return "four_of_a_kind"
+			return 8
 		elif self.has_full_house():
-			return "full_house"
+			return 7
 		elif self.has_flush():
-			return  "flush"
+			return 6
 		elif self.has_straight():
-			return "straight"
+			return 5
 		elif self.has_three():
-			return "three_of_a_kind"
+			return 4
 		elif self.has_two_pair():
-			return "two_pair"
+			return 3
 		elif self.has_pair():
-			return "pair"
+			return 2
 		else:
-			return "high card"
+			return 1
 
 	def compare(self, other):
 		"""Return True if self wins the hand. Return False if other wins."""
-		pass
+		if self.best() > other.best():
+			return True
+		elif self.best() == other.best():
+			if self.best() == 9: #straight flush
+				return self.highest_value > other.highest_value
+
+			elif self.best() == 8: #four of a kind
+				if self.four_val > other.four_val:
+					return True
+				elif self.four_val < other.four_val:
+					return False
+				else:
+					print "This is an impossible hand, but whatever"
+					return self.next_highest[-1] > other.next_highest[-1]
+
+			elif self.best() == 7: #full house
+				#first compare trio
+				if self.triple > other.triple:
+					return True
+				elif self.triple < other.triple:
+					return False
+				else:
+					return self.pair > other.pair
+
+			elif self.best() == 6: #flush
+				#compare the values
+				for idx, item in enumerate(reversed(self.values)): #loop through in forward order
+					if item > list(reversed(other.values))[idx]:
+						return True
+					elif list(reversed(other.values))[idx] > item:
+						return False
+					else: #values are the same; go to the next one
+						pass
+				return False
+
+			elif self.best() == 5: #straight
+				return self.highest_value > other.highest_value
+
+			elif self.best() == 4: #three of a kind
+				if self.three_val > other.three_val:
+					return True
+				elif self.three_val < other.three_val:
+					return False
+				else:
+					for idx, item in enumerate(self.next_highest):
+						if item > other.next_highest[idx]:
+							return True
+						elif other.next_highest[idx] > item:
+							return False
+						else:
+							pass
+					return False
+
+			elif self.best() == 3: #two pairs
+				if self.higher_pair > other.higher_pair:
+					return True
+				elif other.higher_pair > self.higher_pair:
+					return False
+				elif self.lower_pair > other.lower_pair:
+					return True
+				elif other.lower_pair > self.lower_pair:
+					return False
+				else:
+					return self.next_highest[0] > other.next_highest[0]
+
+			elif self.best() == 2: #one pair
+				if self.pair_val > other.pair_val:
+					return True
+				elif other.pair_val > self.pair_val:
+					return False
+				else:
+					for idx, item in enumerate(self.next_highest):
+						if item > other.next_highest[idx]:
+							return True
+						elif other.next_highest[idx] > item:
+							return False
+						else:
+							pass
+					return False
+
+			else: #MAY NEED TO FIX THIS
+				for idx, item in enumerate(reversed(self.values)):
+					if item > list(reversed(other.values))[idx]:
+						return True
+					elif list(reversed(other.values))[idx] > item:
+						return False
+					else:
+						pass
+				return False
+
+		else: #other.best() is greater
+			return False
+
+
+
+#SELF.NEXT_HIGHEST IS ALWAYS A LIST		
+
+#h1 = PokerHand(['5C', '5D', 'AD', '4D', '5D'])
+#h2 = PokerHand(['5C', '5D', 'AD', '8D', '5D'])
+
+#h1 = PokerHand(['3D', '2C', '7D', '7D', '7D'])
+#h2 = PokerHand(['2D', '4C', '7D', '7D', '7D'])
+
+#h1 = PokerHand(['2D', '4D', '7D', '8D', '10D'])
+#h2 = PokerHand(['2D', '3D', '7D', '8D', '10D'])
+
+#h1 = PokerHand(list("5H 5C 6S 7S KD".split()))
+#h2 = PokerHand(list("2C 3S 8S 8D TD".split()))
+
+#print h1.best()
+#print h2.best()
+#print h1.compare(h2)
+
+def parse_hands(filename):
+	total_wins = 0
+	with open(filename, 'r') as fo:
+		for line in fo:
+			h1, h2 = PokerHand(line.split()[0:5]), PokerHand(line.split()[5::])
+			if h1.compare(h2):
+				total_wins += 1
+	return total_wins
+
+#print parse_hands('poker.txt')
+
 
 #======================================#
 
@@ -339,10 +474,10 @@ def test_lychrel(n, limit=50):
 
 #print test_lychrel(4994)
 #print test_lychrel(349)
-print test_lychrel(9998)
-print test_lychrel(196)
-for i in xrange(10):
-	print i, test_lychrel(i)
+#print test_lychrel(9998)
+#print test_lychrel(196)
+#for i in xrange(10):
+#	print i, test_lychrel(i)
 
 def find_lychrel(limit=10000):
 	n_lychrel = 0
@@ -352,4 +487,8 @@ def find_lychrel(limit=10000):
 			print n
 	return n_lychrel
 
-print find_lychrel()
+#print find_lychrel()
+
+#======================================#
+
+
