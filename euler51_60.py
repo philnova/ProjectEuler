@@ -612,6 +612,7 @@ def break_code(code, possible_keys, target_words=("and","at"),disallowed_words =
 
 #print break_code(cipher,POSSIBLE_KEYS)
 #key is found to be (103, 111, 100)
+#print translate((103,111,100),cipher)
 
 def sum_value(key,message):
 	"""Given a key and an encoded message, translate the message using XOR encryption and sum the ascii values
@@ -624,4 +625,4 @@ def sum_value(key,message):
 		key_idx=key_idx%3
 	return total
 
-print sum_value((103,111,100),cipher)
+#print sum_value((103,111,100),cipher)
